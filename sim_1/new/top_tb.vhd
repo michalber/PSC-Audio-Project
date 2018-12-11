@@ -54,11 +54,11 @@ begin
 
 uut : top port map(CLK,RST,PWM_OUT,WAVE);
 
-CLK <= not CLK after 1 ns;
+CLK <= not CLK after 1 ps;
 
 process begin
     RST <= '1';
-    wait for 2ns;
+    wait for 10ps;
     RST <= '0';
     wait;
 end process;
