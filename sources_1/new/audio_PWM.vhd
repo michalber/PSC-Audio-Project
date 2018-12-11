@@ -36,6 +36,32 @@ end audio_PWM;
 
 architecture Behavioral of audio_PWM is
 
+--signal MAX : integer := 2*bitWidth-1;
+--signal din_reg : std_logic_vector(bitWidth-1 downto 0);
+--signal error : std_logic_vector(bitWidth-1 downto 0);
+--signal error_0 : std_logic_vector(bitWidth-1 downto 0);
+--signal error_1 : std_logic_vector(bitWidth-1 downto 0);
+
+--begin
+
+--process (CLK) begin
+--if(rising_edge(CLK)) then
+--    din_reg <= WAVE_IN;
+--    error_1 <= error + MAX - din_reg;
+--    error_0 <= error - din_reg;
+-- end if;
+-- end process;
+ 
+-- process (CLK) begin
+--       if (RST = '1') then
+--         PWM_OUT <= '0';
+--       elsif (din_reg >= error) then
+--         PWM_OUT <= '1';
+--       else 
+--         PWM_OUT <= '0';
+--       end if;
+--  end process;
+    
 signal sample_max : std_logic_vector (bitWidth-1 downto 0);
 signal count : std_logic_vector (bitWidth-1 downto 0) := x"00";
 
@@ -47,7 +73,7 @@ load_p : process(CLK, RST) begin
 if(RST = '1') then
     count <= (others=>'0');   
 elsif(rising_edge(CLK)) then
-    if(SAMPLE='1') then
+    if(SAMPLE = '1') then
        count <= x"00";       
     else 
         count <= count + 1;

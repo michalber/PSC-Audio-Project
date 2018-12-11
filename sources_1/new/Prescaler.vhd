@@ -36,7 +36,7 @@ end Prescaler;
 architecture Behavioral of Prescaler is
 
 signal DIVIDER: std_logic_vector(3 downto 0);	-- internal divider register 
-constant divide_factor: integer := 4;			-- divide factor user constant
+constant divide_factor: integer := 8 ;			-- divide factor user constant
 												-- remember to adjust lenght of DIVIDER register when divide_factor is being changed
 
 begin 

@@ -37,12 +37,15 @@ use IEEE.std_logic_unsigned.all;
 entity top is
   port(
        CLK : in STD_LOGIC;
-       RES : in STD_LOGIC;
-       PWM_OUT : out STD_LOGIC
+       RST : in STD_LOGIC;
+       PWM_OUT : out STD_LOGIC;
+       WAVE : out STD_LOGIC_VECTOR(7 downto 0)
   );
 end top;
 
 architecture Behavioral of top is
+
+---- Component declarations -----
 
 component audio_PWM
   port (
@@ -71,9 +74,9 @@ end component;
 
 ---- Signal declarations used on the diagram ----
 
-signal NET43 : STD_LOGIC;
-signal NET83 : STD_LOGIC;
-signal BUS39 : STD_LOGIC_VECTOR(7 downto 0);
+signal NET32 : STD_LOGIC;
+signal NET51 : STD_LOGIC;
+signal BUS47 : STD_LOGIC_VECTOR(7 downto 0);
 
 begin
 
@@ -81,26 +84,28 @@ begin
 
 U1 : audio_PWM
   port map(
-       CLK => NET83,
+       CLK => CLK,
        PWM_OUT => PWM_OUT,
-       RST => RES,
-       SAMPLE => NET43,
-       WAVE_IN => BUS39
+       RST => RST,
+       SAMPLE => NET51,
+       WAVE_IN => BUS47
   );
 
-U2 : Prescaler
+U2 : triangle_gen
   port map(
-       CEO => NET83,
-       CLK => CLK,
-       CLR => RES
+       CLK => NET32,
+       RST => RST,
+       SAMPLE => NET51,
+       WAVE_OUT => BUS47
   );
 
-U3 : triangle_gen
+U3 : Prescaler
   port map(
+       CEO => NET32,
        CLK => CLK,
-       RST => RES,
-       SAMPLE => NET43,
-       WAVE_OUT => BUS39
+       CLR => RST
   );
 
+  WAVE <= BUS47;
+  
 end Behavioral;
