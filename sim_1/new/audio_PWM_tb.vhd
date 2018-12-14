@@ -38,58 +38,78 @@ end audio_PWM_tb;
 architecture Behavioral of audio_PWM_tb is
 
 component audio_PWM is
-    Port ( CLK : in STD_LOGIC;
-           WAVE_IN : in STD_LOGIC_VECTOR (7 downto 0);
-           SAMPLE : in STD_LOGIC;
-           RST:in std_logic;
-           PWM_OUT:out std_logic
-           );
+    port (
+    CLK, CE, RES, LD : in std_logic;
+    DATA : in std_logic_vector(7 downto 0);    
+    PWM : out std_logic
+);
 end component;
 
-signal CLK,RST,SAMPLE,PWM_OUT : std_logic := '0';
-signal WAVE_IN : std_logic_vector(7 downto 0);
+signal CLK,CE,RES,LD,PWM : std_logic := '0';
+signal DATA : std_logic_vector(7 downto 0);
 
 
 begin
 
-uut : audio_PWM port map(CLK,WAVE_IN,RST,SAMPLE,PWM_OUT);
+uut : audio_PWM port map(CLK,CE,RES,LD,DATA,PWM);
 
 CLK <= not CLK after 10 ps;
 
 
 RST_p : process
 begin
-RST <= '1';
+RES <= '1';
 wait for 100 ns;
-RST <= '0';
+RES <= '0';
 wait;
 end process;
 
+CE_p : process
+begin
+    CE <= '0';
+    wait for 150ns;
+    CE <= '1';
+    wait;
+end process;
 WAVE_IN_p : process
 begin
-wait for 100 ns;
-SAMPLE <= '1';
-WAVE_IN <= "11111111";
-wait for 10ns;
-SAMPLE <= '0';
+wait for 20ns;
 
-wait for 100ns;
-SAMPLE <= '1';
-WAVE_IN <= "11110000";
-wait for 10ns;
-SAMPLE <= '0';
+wait for 90 ns;
+DATA <= x"ff";
+wait for 20ps;
+LD <= '1';
+wait for 20ps;
+LD <= '0';
 
-wait for 100ns;
-SAMPLE <= '1';
-WAVE_IN <= "00001111";
-wait for 10ns;
-SAMPLE <= '0';
+wait for 90ns;
+DATA <= x"00";
+wait for 40ns;
+LD <= '1';
+wait for 20ps;
+LD <= '0';
+wait for 40ns;
 
-wait for 100ns;
-SAMPLE <= '1';
-WAVE_IN <= "00000001";
-wait for 10ns;
-SAMPLE <= '0';
+wait for 90ns;
+DATA <= x"a0";
+wait for 20ps;
+LD <= '1';
+wait for 20ps;
+LD <= '0';
+
+wait for 90ns;
+DATA <= x"0f";
+wait for 20ps;
+LD <= '1';
+wait for 20ps;
+LD <= '0';
+
+wait for 90ns;
+DATA <= x"01";
+wait for 20ps;
+LD <= '1';
+wait for 20ps;
+LD <= '0';
    
 wait;
 end process;

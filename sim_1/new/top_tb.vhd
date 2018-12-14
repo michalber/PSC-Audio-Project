@@ -42,17 +42,17 @@ architecture Behavioral of top_tb is
 component top is
 port (CLK : in std_logic;       
       RST :in std_logic;
-      PWM_OUT:out std_logic;
+      PDM:out std_logic;
       WAVE:out std_logic_vector
      );
 end component;
 
-signal CLK,RST,PWM_OUT : std_logic := '0';
+signal CLK,RST,PDM : std_logic := '0';
 signal WAVE : std_logic_vector(7 downto 0);
 
 begin
 
-uut : top port map(CLK,RST,PWM_OUT,WAVE);
+uut : top port map(CLK,RST,PDM,WAVE);
 
 CLK <= not CLK after 1 ps;
 

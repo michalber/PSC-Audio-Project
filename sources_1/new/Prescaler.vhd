@@ -4,7 +4,7 @@
 -- 
 -- Create Date: 08.12.2018 15:59:55
 -- Design Name: 
--- Module Name: Prescaler - Behavioral
+-- Module Name: PREScaler - Behavioral
 -- Project Name: 
 -- Target Devices: 
 -- Tool Versions: 
@@ -17,7 +17,6 @@
 -- Additional Comments:
 -- 
 ----------------------------------------------------------------------------------
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.all;
 use IEEE.STD_LOGIC_UNSIGNED.all;
@@ -26,8 +25,9 @@ use IEEE.STD_LOGIC_UNSIGNED.all;
 entity Prescaler is
 	port(
 		CLK : in STD_LOGIC;		
-		CLR : in STD_LOGIC;
-		CEO : out STD_LOGIC
+		RST : in STD_LOGIC;
+		CLK_25M : out STD_LOGIC;
+		CLK_100k : out STD_LOGIC
 		);	   
 end Prescaler;
 
@@ -35,24 +35,40 @@ end Prescaler;
 
 architecture Behavioral of Prescaler is
 
-signal DIVIDER: std_logic_vector(8 downto 0);	-- internal divider register 
-constant divide_factor: integer := 256 ;			-- divide factor user constant
-												-- remember to adjust lenght of DIVIDER register when divide_factor is being changed
+signal DIVIDER_25M: std_logic_vector(3 downto 0);	 
+constant divide_25M: integer := 4 ;			
+signal DIVIDER_100k: std_logic_vector(10 downto 0);	 
+constant divide_100k: integer := 1000 ;
+											
 
 begin 
-	process (CLK, CLR)
+	process (CLK, RST)
 	begin
-		if CLR = '1' then
-			DIVIDER <= (others => '0');
+		if RST = '1' then
+			DIVIDER_25M <= (others => '0');
 		elsif CLK'event and CLK = '1' then			
-			if DIVIDER = (divide_factor-1) then
-				DIVIDER <= (others => '0');
+			if DIVIDER_25M = (divide_25M-1) then
+				DIVIDER_25M <= (others => '0');
 			else
-				DIVIDER <= DIVIDER + 1;
+				DIVIDER_25M <= DIVIDER_25M + 1;
 			end if;		
 		end if;
 	end process;
-
-CEO <= '1' when DIVIDER = (divide_factor-1) else '0';
 	
+	process (CLK, RST)
+        begin
+            if RST = '1' then
+                DIVIDER_100k <= (others => '0');
+            elsif CLK'event and CLK = '1' then            
+                if DIVIDER_100k = (divide_100k-1) then
+                    DIVIDER_100k <= (others => '0');
+                else
+                    DIVIDER_100k <= DIVIDER_100k + 1;
+                end if;        
+            end if;
+        end process;
+
+CLK_25M <= '1' when DIVIDER_25M = (divide_25M-1) else '0';
+CLK_100k <= '1' when DIVIDER_100k = (divide_100k-1) else '0';	
+
 end Behavioral;

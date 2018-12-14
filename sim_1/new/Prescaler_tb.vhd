@@ -2,9 +2,9 @@
 -- Company: 
 -- Engineer: 
 -- 
--- Create Date: 08.12.2018 14:57:00
+-- Create Date: 14.12.2018 22:48:21
 -- Design Name: 
--- Module Name: triangle_gen_tb - Behavioral
+-- Module Name: Prescaler_tb - Behavioral
 -- Project Name: 
 -- Target Devices: 
 -- Tool Versions: 
@@ -18,10 +18,9 @@
 -- 
 ----------------------------------------------------------------------------------
 
+
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.STD_LOGIC_ARITH.ALL;
-use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
@@ -32,48 +31,36 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity triangle_gen_tb is
+entity Prescaler_tb is
 --  Port ( );
-end triangle_gen_tb;
+end Prescaler_tb;
 
-architecture Behavioral of triangle_gen_tb is
+architecture Behavioral of Prescaler_tb is
 
-component triangle_gen is
-port (CLK : in std_logic; 
-      CE : in std_logic;
-      WAVE_OUT : out std_logic_vector(7 downto 0);
-      RST :in std_logic;
-      SAMPLE:out std_logic
-     );
+
+component Prescaler is
+port(
+		CLK : in STD_LOGIC;		
+		RST : in STD_LOGIC;
+		CLK_25M : out STD_LOGIC;
+		CLK_100k : out STD_LOGIC
+		);	
 end component;
 
-signal CLK,CE,RST : std_logic := '0';
-signal WAVE_OUT : std_logic_vector(7 downto 0);
-signal SAMPLE : std_logic;
+signal CLK,RST : std_logic := '0';
+signal CLK_25M,CLK_100k : std_logic;
 
 begin
 
-uut : triangle_gen port map(CLK,CE,WAVE_OUT,RST,SAMPLE);
+uut : Prescaler port map(CLK,RST,CLK_25M,CLK_100k);
 
-CLK <= not CLK after 5 ns;
+CLK <= not CLK after 1ps;
 
 RST_p : process
 begin
-RST <= '1';
-wait for 100 ns;
-RST <= '0';
-wait;
+    RST <= '1';
+    wait for 2ps;
+    RST <= '0';
+    wait;
 end process;
-
-CE_p : process
-begin
-    CE <= '0';
-    wait for 10ns;
-    CE <= '1';
-    wait for 10ns;
-    CE <= '0';
-    wait for 25ns;
-    
-end process;
-
 end Behavioral;
