@@ -43,16 +43,17 @@ port(
 		CLK : in STD_LOGIC;		
 		RST : in STD_LOGIC;
 		CLK_25M : out STD_LOGIC;
-		CLK_100k : out STD_LOGIC
+		CLK_100k : out STD_LOGIC;
+		CLK_1k : out STD_LOGIC
 		);	
 end component;
 
 signal CLK,RST : std_logic := '0';
-signal CLK_25M,CLK_100k : std_logic;
+signal CLK_25M,CLK_100k,CLK_1k : std_logic;
 
 begin
 
-uut : Prescaler port map(CLK,RST,CLK_25M,CLK_100k);
+uut : Prescaler port map(CLK,RST,CLK_25M,CLK_100k,CLK_1k);
 
 CLK <= not CLK after 1ps;
 
