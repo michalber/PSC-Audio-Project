@@ -20,7 +20,8 @@
 
 
 library IEEE;
-use IEEE.Std_logic_1164.all;
+use IEEE.NUMERIC_STD.ALL;
+use IEEE.STD_LOGIC_1164.ALL;
 
 entity SumSounds_tb is
 end;
@@ -31,30 +32,30 @@ architecture Behavioral of SumSounds_tb is
       Port ( CLK : in STD_LOGIC;
              CE : in STD_LOGIC;
              RST : in STD_LOGIC;
-             KICK_IN : in STD_LOGIC_VECTOR (7 downto 0);
-             SNARE_IN : in STD_LOGIC_VECTOR (7 downto 0);
-             HAT_IN : in STD_LOGIC_VECTOR (7 downto 0);
-             CRASH_IN : in STD_LOGIC_VECTOR (7 downto 0);
-             RIDE_IN : in STD_LOGIC_VECTOR (7 downto 0);
-             TOM1_IN : in STD_LOGIC_VECTOR (7 downto 0);
-             TOM2_IN : in STD_LOGIC_VECTOR (7 downto 0);
+             KICK_IN : in signed (7 downto 0);
+             SNARE_IN : in signed (7 downto 0);
+             HAT_IN : in signed (7 downto 0);
+             CRASH_IN : in signed (7 downto 0);
+             RIDE_IN : in signed (7 downto 0);
+             TOM1_IN : in signed (7 downto 0);
+             TOM2_IN : in signed (7 downto 0);
              SAMPLE_AV : out STD_LOGIC;
-             SAMPLE_OUT : out STD_LOGIC_VECTOR (7 downto 0)
+             SAMPLE_OUT : out unsigned (7 downto 0)
              );
   end component;
 
   signal CLK: STD_LOGIC := '0';
   signal CE: STD_LOGIC := '0';
   signal RST: STD_LOGIC := '0';
-  signal KICK_IN: STD_LOGIC_VECTOR (7 downto 0) := (others=> '0');
-  signal SNARE_IN: STD_LOGIC_VECTOR (7 downto 0) := (others=> '0');
-  signal HAT_IN: STD_LOGIC_VECTOR (7 downto 0) := (others=> '0');
-  signal CRASH_IN: STD_LOGIC_VECTOR (7 downto 0) := (others=> '0');
-  signal RIDE_IN: STD_LOGIC_VECTOR (7 downto 0) := (others=> '0');
-  signal TOM1_IN: STD_LOGIC_VECTOR (7 downto 0) := (others=> '0');
-  signal TOM2_IN: STD_LOGIC_VECTOR (7 downto 0) := (others=> '0');
+  signal KICK_IN: signed (7 downto 0) := (others=> '0');
+  signal SNARE_IN: signed (7 downto 0) := (others=> '0');
+  signal HAT_IN: signed (7 downto 0) := (others=> '0');
+  signal CRASH_IN: signed (7 downto 0) := (others=> '0');
+  signal RIDE_IN: signed (7 downto 0) := (others=> '0');
+  signal TOM1_IN: signed (7 downto 0) := (others=> '0');
+  signal TOM2_IN: signed (7 downto 0) := (others=> '0');
   signal SAMPLE_AV: STD_LOGIC;
-  signal SAMPLE_OUT: STD_LOGIC_VECTOR (7 downto 0) ;
+  signal SAMPLE_OUT: unsigned (7 downto 0) ;
 
 begin
 
@@ -85,7 +86,8 @@ begin
     KICK_IN <= x"11";
     wait for 100ns;
     KICK_IN <= x"bb";
-    wait for 50ns;
+    wait for 150ns;
+    KICK_IN <= x"7f";
     wait;    
 end process;
 
@@ -96,6 +98,9 @@ begin
     wait for 100ns;
     SNARE_IN <= x"12";
     wait for 50ns;
+    SNARE_IN <= x"aa"; 
+    wait for 150ns;
+    SNARE_IN <= x"7f";   
     wait;    
 end process;
 

@@ -57,22 +57,24 @@ begin
 end process;
 -- -------------------------------------------------------------------------------------------------------
 -- second step input register 
-process (cnt_max, RES)
+process (cnt_max)
 begin
-    if RES = '1' then
-        DATA_int_cmp <= (others => '0');
-    elsif rising_edge(cnt_max) then           
-        DATA_int_cmp <= DATA_int;       -- load data buffet to comparation buffer when counter if full 
+    if rising_edge(cnt_max) then           
+        if RES = '1' then
+            DATA_int_cmp <= (others => '0');
+        else            
+            DATA_int_cmp <= DATA_int;       -- load data buffet to comparation buffer when counter if full 
+        end if;
     end if;
 end process;
 -- -------------------------------------------------------------------------------------------------------
 -- 8bit counter
-process (CLK, CE, RES)
-begin
-    if RES = '1' then
-        cnt_out <= (others => '0'); 
-    elsif rising_edge(CLK) then
-        if CE = '1' then
+process (CLK)
+begin     
+    if rising_edge(CLK) then
+        if RES = '1' then
+            cnt_out <= (others => '0');
+        elsif CE = '1' then
             cnt_out <= cnt_out + 1;
         end if;
     end if;
@@ -80,11 +82,11 @@ end process;
 -- -------------------------------------------------------------------------------------------------------
 -- generate overflow signal from counter
 process (CLK, CE, RES)
-begin
-    if RES = '1' or cnt_out < ff then
-        cnt_max <= '0';
-    elsif rising_edge(CLK) and cnt_out = ff then
-        if CE='1' then
+begin    
+    if rising_edge(CLK) and cnt_out = ff then
+        if RES = '1' or cnt_out < ff then
+            cnt_max <= '0';
+        elsif CE='1' then
             cnt_max <= '1';          -- set 1 when overflow
         end if;
     end if;
@@ -103,12 +105,12 @@ begin
 end process;
 -- -------------------------------------------------------------------------------------------------------
 -- PWM D-latch
-process (CLK, CE, RES, RES_PWM_o)
-begin
-    if RES = '1' then
-        q <= '0';
-    elsif rising_edge(CLK) then
-        if CE='1' then
+process (CLK)
+begin    
+    if rising_edge(CLK) then
+        if RES = '1' then
+            q <= '0';
+        elsif CE='1' then
             q <= RES_PWM_o;
         end if;
     end if;

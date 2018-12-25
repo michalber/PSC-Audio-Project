@@ -60,7 +60,7 @@ component Prescaler
 end component;
 component triangle_gen
   generic(
-       bitWidth : INTEGER := 8
+       bitWidth : POSITIVE := 8
   );
   port (
        CE : in STD_LOGIC;
@@ -76,7 +76,6 @@ end component;
 signal NET101 : STD_LOGIC;
 signal NET41 : STD_LOGIC;
 signal NET80 : STD_LOGIC;
-signal Output1 : STD_LOGIC;
 signal BUS158 : STD_LOGIC_VECTOR(7 downto 0);
 
 begin
@@ -89,7 +88,7 @@ U1 : audio_PWM
        CLK => CLK,
        DATA => BUS158(7 downto 0),
        LD => NET101,
-       PWM => Output1,
+       PWM => PDM,
        RES => RST
   );
 
@@ -114,7 +113,6 @@ U3 : triangle_gen
 ---- Terminal assignment ----
 
     -- Output\buffer terminals
-	PDM <= Output1;
 	WAVE <= BUS158;
 
 

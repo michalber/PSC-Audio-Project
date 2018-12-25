@@ -25,7 +25,7 @@ use IEEE.STD_LOGIC_ARITH.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 entity triangle_gen is
-generic (bitWidth : integer := 8);
+generic (bitWidth : POSITIVE := 8);
 
 port (CLK : in std_logic;
       CE : in std_logic; 
@@ -44,7 +44,7 @@ signal direction : std_logic := '0';    -- '0' up / '1' down
 begin
 -- -------------------------------------------------------------------------------
 -- generating SAMPLE signal to get know that sample is ready to read 
-process(CLK,CE,RST)
+process(CLK)
 begin
     if rising_edge(CLK) then
         if RST = '1' then                    
@@ -59,7 +59,7 @@ end process;
 -- -------------------------------------------------------------------------------
 -- Up/Down single counter
 -- direction - 0-upcounting, 1-downcounting 
-process(CLK,CE,RST)
+process(CLK)
 begin
     if rising_edge(CLK) then
         if RST = '1' then
