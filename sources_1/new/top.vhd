@@ -17,26 +17,30 @@
 -- Additional Comments:
 -- 
 ----------------------------------------------------------------------------------
-
+-- Design unit header --
 library IEEE;
-use IEEE.std_logic_1164.all;
-use IEEE.std_logic_arith.all;
-use IEEE.std_logic_signed.all;
-use IEEE.std_logic_unsigned.all;
+use IEEE.NUMERIC_STD.ALL;
+use IEEE.STD_LOGIC_1164.ALL;
+
+
+-- Included from components --
+use ieee.NUMERIC_STD.all;
 
 entity top is
   port(
        CLK : in STD_LOGIC;
        RST : in STD_LOGIC;
+       playKick : in STD_LOGIC;
+       playSnare : in STD_LOGIC;
        PDM : out STD_LOGIC;
-       WAVE : out STD_LOGIC_VECTOR(7 downto 0)
+       WAVE : out std_logic_vector(7 downto 0)
   );
 end top;
 
-architecture Behavioral of top is
+architecture top of top is
 
 ---- Component declarations -----
-
+-- ---------------------------------------------------------------------------------------------------------------
 component audio_PWM
   generic(
        PWM_RES : POSITIVE := 8
@@ -44,39 +48,77 @@ component audio_PWM
   port (
        CE : in STD_LOGIC;
        CLK : in STD_LOGIC;
-       DATA : in STD_LOGIC_VECTOR(PWM_RES-1 downto 0);
+       DATA : in std_logic_vector(PWM_RES-1 downto 0);
        LD : in STD_LOGIC;
        RES : in STD_LOGIC;
        PWM : out STD_LOGIC
   );
 end component;
+-- ---------------------------------------------------------------------------------------------------------------
+component Kick
+  port (
+       CE : in STD_LOGIC;
+       CLK : in STD_LOGIC;
+       PLAY : in STD_LOGIC;
+       RST : in STD_LOGIC;
+       KICK_SAMP_O : out SIGNED(7 downto 0)
+  );
+end component;
+-- ---------------------------------------------------------------------------------------------------------------
 component Prescaler
   port (
        CLK : in STD_LOGIC;
        RST : in STD_LOGIC;
        CLK_100k : out STD_LOGIC;
+       CLK_1k : out STD_LOGIC;
        CLK_25M : out STD_LOGIC
   );
 end component;
-component triangle_gen
-  generic(
-       bitWidth : POSITIVE := 8
-  );
+-- ---------------------------------------------------------------------------------------------------------------
+component Snare
   port (
        CE : in STD_LOGIC;
        CLK : in STD_LOGIC;
+       PLAY : in STD_LOGIC;
        RST : in STD_LOGIC;
-       SAMPLE : out STD_LOGIC;
-       WAVE_OUT : out STD_LOGIC_VECTOR(bitWidth-1 downto 0)
+       SNARE_SAMP_O : out SIGNED(7 downto 0)
   );
 end component;
+-- ---------------------------------------------------------------------------------------------------------------
+component SumSounds
+  port (
+       CE : in STD_LOGIC;
+       CLK : in STD_LOGIC;
+       CRASH_IN : in SIGNED(7 downto 0);
+       HAT_IN : in SIGNED(7 downto 0);
+       KICK_IN : in SIGNED(7 downto 0);
+       RIDE_IN : in SIGNED(7 downto 0);
+       RST : in STD_LOGIC;
+       SNARE_IN : in SIGNED(7 downto 0);
+       TOM1_IN : in SIGNED(7 downto 0);
+       TOM2_IN : in SIGNED(7 downto 0);
+       SAMPLE_AV : out STD_LOGIC;
+       SAMPLE_OUT : out std_logic_vector(7 downto 0)
+  );
+end component;
+-- ---------------------------------------------------------------------------------------------------------------
+
+----     Constants     -----
+constant DANGLING_INPUT_CONSTANT : STD_LOGIC := '0';
 
 ---- Signal declarations used on the diagram ----
 
-signal NET101 : STD_LOGIC;
-signal NET41 : STD_LOGIC;
-signal NET80 : STD_LOGIC;
-signal BUS158 : STD_LOGIC_VECTOR(7 downto 0);
+signal CLK1 : STD_LOGIC;
+signal CLK100 : STD_LOGIC;
+signal CLK25 : STD_LOGIC;
+signal NET155 : STD_LOGIC;
+signal kick_o : SIGNED(7 downto 0);
+signal snare_o : SIGNED(7 downto 0);
+signal addedSamples : std_logic_vector(7 downto 0);
+
+---- Declaration for Dangling input ----
+signal Dangling_Input_Signal : STD_LOGIC;
+signal Dangling_Input_Signal_SIGNED : SIGNED(0 downto 0) := "0";
 
 begin
 
@@ -84,10 +126,10 @@ begin
 
 U1 : audio_PWM
   port map(
-       CE => NET80,
+       CE => CLK25,
        CLK => CLK,
-       DATA => BUS158(7 downto 0),
-       LD => NET101,
+       DATA => addedSamples,
+       LD => NET155,
        PWM => PDM,
        RES => RST
   );
@@ -95,26 +137,91 @@ U1 : audio_PWM
 U2 : Prescaler
   port map(
        CLK => CLK,
-       CLK_100k => NET41,
-       CLK_25M => NET80,
+       CLK_100k => CLK100,
+       CLK_1k => CLK1,
+       CLK_25M => CLK25,
        RST => RST
   );
 
-U3 : triangle_gen
+U3 : Kick
   port map(
-       CE => NET41,
+       CE => CLK100,
        CLK => CLK,
+       PLAY => playKick,
        RST => RST,
-       SAMPLE => NET101,
-       WAVE_OUT => BUS158(7 downto 0)
+       KICK_SAMP_O => kick_o
+  );
+
+U4 : Snare
+  port map(
+       CE => CLK100,
+       CLK => CLK,
+       PLAY => playSnare,
+       RST => RST,
+       SNARE_SAMP_O => snare_o
+  );
+
+U5 : SumSounds
+  port map(
+       CE => CLK100,
+       CLK => CLK,
+       CRASH_IN(0) => Dangling_Input_Signal_SIGNED(0),
+       CRASH_IN(1) => Dangling_Input_Signal_SIGNED(0),
+       CRASH_IN(2) => Dangling_Input_Signal_SIGNED(0),
+       CRASH_IN(3) => Dangling_Input_Signal_SIGNED(0),
+       CRASH_IN(4) => Dangling_Input_Signal_SIGNED(0),
+       CRASH_IN(5) => Dangling_Input_Signal_SIGNED(0),
+       CRASH_IN(6) => Dangling_Input_Signal_SIGNED(0),
+       CRASH_IN(7) => Dangling_Input_Signal_SIGNED(0),
+       
+       HAT_IN(0) => Dangling_Input_Signal_SIGNED(0),
+       HAT_IN(1) => Dangling_Input_Signal_SIGNED(0),
+       HAT_IN(2) => Dangling_Input_Signal_SIGNED(0),
+       HAT_IN(3) => Dangling_Input_Signal_SIGNED(0),
+       HAT_IN(4) => Dangling_Input_Signal_SIGNED(0),
+       HAT_IN(5) => Dangling_Input_Signal_SIGNED(0),
+       HAT_IN(6) => Dangling_Input_Signal_SIGNED(0),
+       HAT_IN(7) => Dangling_Input_Signal_SIGNED(0),
+       
+       KICK_IN => kick_o,
+       
+       RIDE_IN(0) => Dangling_Input_Signal_SIGNED(0),
+       RIDE_IN(1) => Dangling_Input_Signal_SIGNED(0),
+       RIDE_IN(2) => Dangling_Input_Signal_SIGNED(0),
+       RIDE_IN(3) => Dangling_Input_Signal_SIGNED(0),
+       RIDE_IN(4) => Dangling_Input_Signal_SIGNED(0),
+       RIDE_IN(5) => Dangling_Input_Signal_SIGNED(0),
+       RIDE_IN(6) => Dangling_Input_Signal_SIGNED(0),
+       RIDE_IN(7) => Dangling_Input_Signal_SIGNED(0),
+       
+       RST => RST,
+       SAMPLE_AV => NET155,
+       SAMPLE_OUT => addedSamples,
+       SNARE_IN => snare_o,
+       
+       TOM1_IN(0) => Dangling_Input_Signal_SIGNED(0),
+       TOM1_IN(1) => Dangling_Input_Signal_SIGNED(0),
+       TOM1_IN(2) => Dangling_Input_Signal_SIGNED(0),
+       TOM1_IN(3) => Dangling_Input_Signal_SIGNED(0),
+       TOM1_IN(4) => Dangling_Input_Signal_SIGNED(0),
+       TOM1_IN(5) => Dangling_Input_Signal_SIGNED(0),
+       TOM1_IN(6) => Dangling_Input_Signal_SIGNED(0),
+       TOM1_IN(7) => Dangling_Input_Signal_SIGNED(0),
+       
+       TOM2_IN(0) => Dangling_Input_Signal_SIGNED(0),
+       TOM2_IN(1) => Dangling_Input_Signal_SIGNED(0),
+       TOM2_IN(2) => Dangling_Input_Signal_SIGNED(0),
+       TOM2_IN(3) => Dangling_Input_Signal_SIGNED(0),
+       TOM2_IN(4) => Dangling_Input_Signal_SIGNED(0),
+       TOM2_IN(5) => Dangling_Input_Signal_SIGNED(0),
+       TOM2_IN(6) => Dangling_Input_Signal_SIGNED(0),
+       TOM2_IN(7) => Dangling_Input_Signal_SIGNED(0)
   );
 
 
----- Terminal assignment ----
+---- Dangling input signal assignment ----
 
-    -- Output\buffer terminals
-	WAVE <= BUS158;
+Dangling_Input_Signal <= DANGLING_INPUT_CONSTANT;
+WAVE <= addedSamples;
 
-
-end Behavioral;
-
+end top;

@@ -20,9 +20,8 @@
 
 
 library IEEE;
+use IEEE.NUMERIC_STD.ALL;
 use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.STD_LOGIC_ARITH.ALL;
-use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
@@ -40,26 +39,50 @@ end top_tb;
 architecture Behavioral of top_tb is
 
 component top is
-port (CLK : in std_logic;       
-      RST :in std_logic;
-      PDM:out std_logic;
-      WAVE:out std_logic_vector
+port (
+      CLK : in STD_LOGIC;
+      RST : in STD_LOGIC;
+      PDM : out STD_LOGIC;
+      playKick : in STD_LOGIC;
+      playSnare : in STD_LOGIC;
+      WAVE : out std_logic_vector(7 downto 0)
      );
 end component;
 
-signal CLK,RST,PDM : std_logic := '0';
+signal CLK,RST,PDM,playKick,playSnare : std_logic := '0';
 signal WAVE : std_logic_vector(7 downto 0);
 
 begin
 
-uut : top port map(CLK,RST,PDM,WAVE);
+uut : top port map(CLK,RST,PDM,playKick,playSnare,WAVE);
 
 CLK <= not CLK after 1 ps;
 
-process begin
+RST_p : process 
+begin
     RST <= '1';
     wait for 10ps;
     RST <= '0';
     wait;
 end process;
+
+kick_in_p : process
+begin
+    wait for 100ps;
+    playKick <= '1';
+    wait for 2ps;
+    playKick <= '0';
+    wait;
+end process;
+
+snare_in_p : process
+begin
+    wait for 1500ns;
+    playSnare <= '1';
+    wait for 2ps;
+    playSnare <= '0';
+    wait;
+end process;
+
+
 end Behavioral;

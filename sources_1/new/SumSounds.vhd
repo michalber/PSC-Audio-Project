@@ -46,7 +46,7 @@ entity SumSounds is
            TOM2_IN : in signed (7 downto 0);
            
            SAMPLE_AV : out STD_LOGIC;
-           SAMPLE_OUT : out unsigned (7 downto 0)
+           SAMPLE_OUT : out std_logic_vector (7 downto 0)
            );
 end SumSounds;
 
@@ -98,7 +98,7 @@ begin
         end if;
     end if;   
 end process;
-
+-- ------------------------------------------------------------------------------------
 sum_us_p : process(CLK)
 begin 
     if rising_edge(CLK) then
@@ -116,6 +116,6 @@ begin
     end if;                 
 end process;
 -- ------------------------------------------------------------------------------------
-SAMPLE_OUT <= unsigned(resize(sum_us, SAMPLE_OUT'length));
+SAMPLE_OUT <= std_logic_vector(unsigned'(resize(sum_us, SAMPLE_OUT'length)));
 
 end Behavioral;

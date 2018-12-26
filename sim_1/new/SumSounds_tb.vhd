@@ -40,7 +40,7 @@ architecture Behavioral of SumSounds_tb is
              TOM1_IN : in signed (7 downto 0);
              TOM2_IN : in signed (7 downto 0);
              SAMPLE_AV : out STD_LOGIC;
-             SAMPLE_OUT : out unsigned (7 downto 0)
+             SAMPLE_OUT : out STD_LOGIC_VECTOR(7 downto 0)
              );
   end component;
 
@@ -55,7 +55,7 @@ architecture Behavioral of SumSounds_tb is
   signal TOM1_IN: signed (7 downto 0) := (others=> '0');
   signal TOM2_IN: signed (7 downto 0) := (others=> '0');
   signal SAMPLE_AV: STD_LOGIC;
-  signal SAMPLE_OUT: unsigned (7 downto 0) ;
+  signal SAMPLE_OUT: STD_LOGIC_VECTOR (7 downto 0) ;
 
 begin
 

@@ -20,6 +20,7 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.all;
 use IEEE.STD_LOGIC_UNSIGNED.all;
+use IEEE.NUMERIC_STD.ALL;
 
 
 entity Prescaler is
@@ -40,7 +41,7 @@ signal DIVIDER_25M: std_logic_vector(3 downto 0);
 constant divide_25M: integer := 4 ;	
 -- -----------------------------------------------------------		
 signal DIVIDER_100k: std_logic_vector(14 downto 0);	 
-constant divide_100k: integer := 20000 ;
+constant divide_100k: integer := 1000 ;
 -- -----------------------------------------------------------
 signal DIVIDER_1k: std_logic_vector(14 downto 0);	 
 constant divide_1k: integer := 100000 ;
