@@ -63,7 +63,7 @@ begin
 end process;
 -- -------------------------------------------------------------------------------------------------------
 -- second step input register 
-process (cnt_max)
+process (RES, cnt_max)
 begin
     if RES = '1' then
         DATA_int_cmp <= (others => '0');
@@ -73,7 +73,7 @@ begin
 end process;
 -- -------------------------------------------------------------------------------------------------------
 -- 8bit counter
-process (CLK, CE, RES)
+process (CLK, RES)
 begin
     if RES = '1' then
         cnt_out <= (others => '0'); 
@@ -85,7 +85,7 @@ begin
 end process;
 -- -------------------------------------------------------------------------------------------------------
 -- generate overflow signal from counter
-process (CLK, cnt_out)
+process (CLK, RES, cnt_out)
 begin
     if RES = '1' or cnt_out < ff then
         cnt_max <= '0';
@@ -109,7 +109,7 @@ begin
 end process;
 -- -------------------------------------------------------------------------------------------------------
 -- PWM D-latch
-process (CLK, CE, RES, RES_PWM_o)
+process (CLK, RES)
 begin
     if RES = '1' then
         q <= '0';
@@ -121,6 +121,6 @@ begin
 end process;
 -- -------------------------------------------------------------------------------------------------------
 -- assign D-latch q output to PWM output port
-PWM <= q;
+PWM <= '0' when q = '0' else 'Z';
 
 end Behavioral;

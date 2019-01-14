@@ -33,6 +33,7 @@ entity top is
        playKick : in STD_LOGIC;
        playSnare : in STD_LOGIC;
        PDM : out STD_LOGIC;
+       AUD_SD : out STD_LOGIC;
        WAVE : out std_logic_vector(7 downto 0)
   );
 end top;
@@ -108,13 +109,14 @@ constant DANGLING_INPUT_CONSTANT : STD_LOGIC := '0';
 
 ---- Signal declarations used on the diagram ----
 
-signal CLK1 : STD_LOGIC;
-signal CLK100 : STD_LOGIC;
-signal CLK25 : STD_LOGIC;
-signal NET155 : STD_LOGIC;
-signal kick_o : SIGNED(7 downto 0);
-signal snare_o : SIGNED(7 downto 0);
-signal addedSamples : std_logic_vector(7 downto 0);
+signal CLK1 : STD_LOGIC := '0';
+signal CLK100 : STD_LOGIC := '0';
+signal CLK25 : STD_LOGIC := '0';
+signal NET155 : STD_LOGIC := '0';
+signal kick_o : SIGNED(7 downto 0) := (others => '0');
+signal snare_o : SIGNED(7 downto 0) := (others => '0');
+signal addedSamples : std_logic_vector(7 downto 0) := (others => '0');
+signal pwm_int : std_logic;
 
 ---- Declaration for Dangling input ----
 signal Dangling_Input_Signal : STD_LOGIC;
@@ -223,5 +225,7 @@ U5 : SumSounds
 
 Dangling_Input_Signal <= DANGLING_INPUT_CONSTANT;
 WAVE <= addedSamples;
+
+AUD_SD <= '1';
 
 end top;

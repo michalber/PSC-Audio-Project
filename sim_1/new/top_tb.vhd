@@ -43,18 +43,19 @@ port (
       CLK : in STD_LOGIC;
       RST : in STD_LOGIC;
       PDM : out STD_LOGIC;
+      AUD_SD : out STD_LOGIC;
       playKick : in STD_LOGIC;
       playSnare : in STD_LOGIC;
       WAVE : out std_logic_vector(7 downto 0)
      );
 end component;
 
-signal CLK,RST,PDM,playKick,playSnare : std_logic := '0';
+signal CLK,RST,PDM,playKick,playSnare,AUD_SD : std_logic := '0';
 signal WAVE : std_logic_vector(7 downto 0);
 
 begin
 
-uut : top port map(CLK,RST,PDM,playKick,playSnare,WAVE);
+uut : top port map(CLK,RST,PDM,AUD_SD,playKick,playSnare,WAVE);
 
 CLK <= not CLK after 1 ps;
 
@@ -69,6 +70,10 @@ end process;
 kick_in_p : process
 begin
     wait for 100ps;
+    playKick <= '1';
+    wait for 2ps;
+    playKick <= '0';
+    wait for 6000ns;
     playKick <= '1';
     wait for 2ps;
     playKick <= '0';
