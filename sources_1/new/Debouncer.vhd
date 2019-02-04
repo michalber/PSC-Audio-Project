@@ -28,9 +28,9 @@ entity Debouncer is
 	 port(
 		 CLK : in STD_LOGIC;	   
 		 CE : in STD_LOGIC;	   -- clock enable input
-		 PUSH : in STD_LOGIC_VECTOR(4 downto 0);	   -- pushbutton entry bus
+		 PUSH : in STD_LOGIC_VECTOR(1 downto 0);	   -- pushbutton entry bus
 		 RST : in STD_LOGIC;	   -- reset
-		 PE : out STD_LOGIC_VECTOR(4 downto 0)        -- debounced output bus
+		 PE : out STD_LOGIC_VECTOR(1 downto 0)        -- debounced output bus
 	     );
 end Debouncer;
 
@@ -38,7 +38,7 @@ end Debouncer;
 
 architecture Behavioral of Debouncer is
 
-type delay_array is array(0 to 4) of std_logic_vector(2 downto 0);  -- array of delay times
+type delay_array is array(0 to 1) of std_logic_vector(2 downto 0);  -- array of delay times
 signal DELAY : delay_array;		-- debounce register
 
 begin
@@ -46,7 +46,7 @@ begin
 process(CLK, RST)
 begin
 -- duplication of the same code for each PUSH entry -> making debounce for each pin individually
-	for i in 0 to 4 loop
+	for i in 0 to 1 loop
 	   if RST = '1' then
 	       DELAY(i) <= (others => '0');
 	   elsif CLK'event and CLK = '1' then

@@ -20,9 +20,8 @@
 
 
 library IEEE;
+use IEEE.NUMERIC_STD.ALL;
 use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.STD_LOGIC_ARITH.ALL;
-use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
@@ -43,12 +42,12 @@ port (CLK : in std_logic;
       CE : in std_logic;     
       RST :in std_logic;
       PLAY :in std_logic;
-      SAMPLE_OUT:out signed(7 downto 0)
+      KICK_SAMP_O:out signed(7 downto 0)
      );
 end component;
 
 signal CLK,CE,RST,PLAY : std_logic := '0';
-signal SAMPLE_OUT : signed(7 downto 0);
+signal KICK_SAMP_O : signed(7 downto 0);
 
 begin
 
@@ -57,7 +56,7 @@ uut : Kick port map(
     CE => CE,
     RST => RST,
     PLAY => PLAY,
-    SAMPLE_OUT => SAMPLE_OUT
+    KICK_SAMP_O => KICK_SAMP_O
     );
 
 CLK <= not CLK after 5 ps;

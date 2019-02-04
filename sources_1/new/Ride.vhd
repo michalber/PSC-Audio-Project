@@ -20,9 +20,8 @@
 
 
 library IEEE;
+use IEEE.NUMERIC_STD.ALL;
 use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.STD_LOGIC_ARITH.ALL;
-use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 -- Uncomment the following library declaration if instantiating
 -- any Xilinx leaf cells in this code.
@@ -9002,9 +9001,9 @@ constant ride_sound: memory := (
 	x"00", x"FF", x"00", x"FF", x"FF", x"00", x"FF", x"00", x"00", x"00", x"00", x"00",
 	x"00", x"00", x"00", x"FF", x"00", x"FF", x"00", x"FF", x"00", x"00", x"00", x"FF",
 	x"FF", x"00", x"00", x"00", x"00", x"FF", x"00", x"FF", x"FF", x"00", x"FF", x"00"
-	);
-	
-signal cnt_out: unsigned(17 downto 0) := (others => '0');	
+);
+
+signal cnt_out: integer := 0;	
 signal play_sound: std_logic := '0';
 constant cnt_max: integer := 107519;
 signal out_signal: signed(7 downto 0) := x"00";
@@ -9030,12 +9029,12 @@ process (CLK)
 begin     
     if rising_edge(CLK) then
         if RST = '1' then
-            cnt_out <= (others => '0');
+            cnt_out <= 0;
         elsif CE = '1' and play_sound = '1' then
             cnt_out <= cnt_out + 1;       
         end if;
         if cnt_out = cnt_max then
-            cnt_out <= (others => '0');            
+            cnt_out <= 0;            
         end if;        
     end if;
 end process;
@@ -9047,7 +9046,7 @@ begin
         if RST = '1' then
             out_signal <= x"00";
         elsif CE = '1' then
-            out_signal <= ride_sound(conv_integer(cnt_out));
+            out_signal <= ride_sound(cnt_out);
         end if;
     end if;    
 end process;

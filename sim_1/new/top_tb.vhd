@@ -38,7 +38,7 @@ end top_tb;
 
 architecture Behavioral of top_tb is
 
-component top is
+component top_v1 is
 port (
       CLK : in STD_LOGIC;
       RST : in STD_LOGIC;
@@ -55,7 +55,7 @@ signal WAVE : std_logic_vector(7 downto 0);
 
 begin
 
-uut : top port map(CLK,RST,PDM,AUD_SD,playKick,playSnare,WAVE);
+uut : top_v1 port map(CLK,RST,PDM,AUD_SD,playKick,playSnare,WAVE);
 
 CLK <= not CLK after 1 ps;
 

@@ -46,6 +46,7 @@ signal cnt_out : std_logic_vector(PWM_RES-1 downto 0):= (others => '0');  -- cou
 signal RES_PWM_o : std_logic := '0';    -- buffer to control PWM D-latch, counter-max value 
 signal q : std_logic := '0';    -- PWM D-latch out
 signal cnt_max : std_logic := '0';    -- counter-max flag 
+-- -----------------------------------------------------------------------------------------------------
 constant zero: std_logic_vector(PWM_RES-1 downto 0):= (others => '0'); -- value represents 0 in vector
 constant ff: std_logic_vector(PWM_RES-1 downto 0):= (others => '1');    -- value represents 1 in vector
 
@@ -53,7 +54,7 @@ constant ff: std_logic_vector(PWM_RES-1 downto 0):= (others => '1');    -- value
 begin
 -- -------------------------------------------------------------------------------------------------------
 -- first step input register 
-process(RES,LD)
+process(RES,LD,DATA)
 begin    
     if RES = '1' then
         DATA_int <= (others => '0');
@@ -67,7 +68,7 @@ process (RES, cnt_max)
 begin
     if RES = '1' then
         DATA_int_cmp <= (others => '0');
-    elsif rising_edge(cnt_max) then           
+    elsif(cnt_max'event and cnt_max = '1') then           
         DATA_int_cmp <= DATA_int;       -- load data buffet to comparation buffer when counter if full 
     end if;
 end process;

@@ -40,11 +40,11 @@ architecture Behavioral of Prescaler is
 signal DIVIDER_25M: std_logic_vector(3 downto 0);	 
 constant divide_25M: integer := 4;	
 -- -----------------------------------------------------------		
-signal DIVIDER_100k: std_logic_vector(14 downto 0);	 
-constant divide_100k: integer := 1000;
+signal DIVIDER_100k: std_logic_vector(14 downto 0);	 -- zmniejszenie do 50kHz
+constant divide_100k: integer := 2000;
 -- -----------------------------------------------------------
-signal DIVIDER_1k: std_logic_vector(14 downto 0);	 
-constant divide_1k: integer := 100000 ;
+signal DIVIDER_1k: std_logic_vector(18 downto 0);	 
+constant divide_1k: integer := 500000 ;
 -- -----------------------------------------------------------											
 
 begin 
